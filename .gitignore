@@ -1,2 +1,5 @@
-./database-boardcamp
+
+/node_modules
+/database-boardcamp
 .database-boardcamp.zip
+.env
