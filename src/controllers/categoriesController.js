@@ -1,6 +1,7 @@
 import connection from '../db/database.js';
 
 const getCategories = async (req,res) =>{
+    console.log('eu funciono')
     try{
         const categories = await connection.query(`
         SELECT 

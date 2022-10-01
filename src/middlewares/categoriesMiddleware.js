@@ -1,4 +1,3 @@
-import { serialize } from 'bson';
 import joi from 'joi';
 import connection from '../db/database.js';
 
@@ -20,7 +19,6 @@ const verify = (req,res,next)=>{
 
 const isNew = async (req,res,next)=>{
     const {name} = req.body;
-    console.log(name);
 
     try{
         const query = await connection.query(`
@@ -32,8 +30,6 @@ const isNew = async (req,res,next)=>{
             name = $1
         ;
         `,[name]);
-
-        console.log(query.rows.length)
 
         if (query.rows.length === 0){
             return next();

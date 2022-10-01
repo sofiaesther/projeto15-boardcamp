@@ -5,10 +5,10 @@ import {isNew, verify} from '../middlewares/categoriesMiddleware.js'
 
 const router = express.Router();
 
-router.get('/categories', getCategories);
+router.get('/', getCategories);
 
 router.use(verify);
 router.use(isNew);
-router.post('/categories',postCategories);
+router.post('/',postCategories);
 
 export default router;
