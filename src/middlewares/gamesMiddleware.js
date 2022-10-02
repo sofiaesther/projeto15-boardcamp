@@ -2,6 +2,7 @@ import joi from 'joi';
 import connection from '../db/database.js';
 
 const isValid = async (req,res,next) => {
+
     const gamesSchema = joi.object({
         name: joi.string().required().empty(),
         image: joi.string().required(),
@@ -26,10 +27,10 @@ const isValid = async (req,res,next) => {
             categories
         WHERE
             id = $1
-        ;
+            ;
         `,[categoryId]);
 
-        if(hasCategory.rows.length !==0){
+        if(!hasCategory.rows){
             return res.sendStatus(400);
         };
 
@@ -43,10 +44,11 @@ const isValid = async (req,res,next) => {
         ;
         `,[name]);
 
-        if (hasName.rows.length !==0){
+        console.log(hasName.rows)
+
+        if (hasName.rows.length !== 0){
             return res.sendStatus(409);
         };
-
         next();
 
     }catch(err){

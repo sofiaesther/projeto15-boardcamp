@@ -24,21 +24,19 @@ const getGames = async (req,res)=> {
 
 };
 const postGame = async (req,res) => {
-    onsole.log('to aqui5')
     const {name,image,stockTotal,categoryId,pricePerDay} = req.body;
-
-    const newgame = `"${name}","${image}",${stockTotal},${categoryId},${pricePerDay}`;
     try{
         const query = await connection.query(`
         INSERT INTO
-            games (name,image,stockTotal,categoryId,pricePerDay)
+            games (name, image , "stockTotal" , "categoryId" , "pricePerDay" )
         VALUES
-            ($[1])
+           ('${name}', '${image}', ${stockTotal}, ${categoryId}, ${pricePerDay})
         ;
-        `,[newgame]);
+        `);
+
+        res.sendStatus(201);
 
     }catch(err){
-        console.log('to aqui')
         res.send(err);
     }
 };
