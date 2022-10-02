@@ -32,6 +32,11 @@ const customerId = async (req,res) =>{
             1
         ;
         `, [id]);
+
+        if (client.rowCount ===0 ){
+            return res.sendStatus(404);
+        }
+
         res.send(client);
 
     }catch(err){
@@ -39,4 +44,44 @@ const customerId = async (req,res) =>{
     }
 };
 
-export{allClients,customerId};
+const addCustomer = async (req,res) =>{
+    const {name, phone, cpf, birthday} = req.body;
+
+    try {
+        const query = connection.query(`
+        
+        INSERT INTO
+            customers (name, phone, cpf, birthday)
+        VALUES
+            ('${name}', '${phone}', '${cpf}', '${birthday}')
+        ;`);
+        res.sendStatus(201);
+        
+    } catch (err) {
+        res.send(err);
+    }
+};
+const editCustomer = async(req,res) =>{
+    const {name, phone, cpf, birthday} = req.body;
+    const id = req.params.id;
+    try {
+        const query = connection.query(`
+            UPDATE
+                customers
+            SET
+                name = '${name}',
+                phone = '${phone}',
+                cpf = '${cpf}',
+                birthday = '${birthday}'
+            WHERE
+                id =${id}
+        ;`);
+
+        res.sendStatus(200);
+        
+    } catch (err) {
+        res.send(err);
+    };
+};
+
+export{allClients,customerId, addCustomer, editCustomer};
