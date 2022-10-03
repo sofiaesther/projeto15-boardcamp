@@ -111,9 +111,9 @@ const getRentals = async (req,res) =>{
                 ON
                 games."categoryId" = categories.id
         ${(customerId||gameId)?'WHERE':''}
-        ${customerId?`rentals."customerId"=$1`:''}
-        ${gameId?` rentals."gameId"=$2`:''}
-        ;`,[customerId,gameId]);
+        ${customerId?`rentals."customerId"=${customerId}`:''}
+        ${gameId?` rentals."gameId"=${gameId}`:''}
+        ;`);
         console.log(rentals.rows);
 
         const allRentals = [];
@@ -183,7 +183,7 @@ const returnRental = async (req,res)=>{
             1
         ;`,[id]);
 
-        if(returned.rows[0]){
+        if(returned.rows[0].returnDate!==null){
             return res.sendStatus(400);
         };
 
@@ -232,7 +232,8 @@ const returnRental = async (req,res)=>{
 const deletRent = async(req,res)=>{
     const id = req.params.id;
 
-    const getId = await connection.query(`
+    try {
+        const getId = await connection.query(`
         SELECT
             *
         FROM
@@ -257,12 +258,13 @@ const deletRent = async(req,res)=>{
         LIMIT
             1
         ;`,[id]);
+        console.log(returned.rows[0].returnDate)
 
-        if(returned.rows[0]){
+        if(returned.rows[0].returnDate!==null){
+            console.log('aqui');
             return res.sendStatus(400);
         };
 
-    try {
         const query = await connection.query(`
         DELETE 
         FROM 
@@ -271,6 +273,8 @@ const deletRent = async(req,res)=>{
             id = $1
         ;
         `,[id])
+
+        res.sendStatus(200);
         
     } catch (error) {
         res.send(error);
