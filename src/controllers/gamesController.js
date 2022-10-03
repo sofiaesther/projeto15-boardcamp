@@ -1,9 +1,7 @@
 import connection from "../db/database.js";
 
 const getGames = async (req,res)=> {
-    console.log('passou aqui');
     const startsWith = req.query.name;
-    console.log('passou aqui');
     try{
         const games = await connection.query(`
         SELECT 

@@ -4,6 +4,7 @@ import cors from 'cors';
 import categoriesRouter from './routes/categoriesRouter.js';
 import gamesRouter from './routes/gamesRouter.js';
 import customerRouter from './routes/customerRouter.js';
+import rentalRouter from './routes/rentRouter.js';
 
 const server = express();
 server.use(cors());
@@ -12,6 +13,7 @@ server.use(express.json());
 server.use('/categories',categoriesRouter);
 server.use('/customer',customerRouter);
 server.use('/games',gamesRouter);
+server.use('/rentals',rentalRouter);
 
 
 server.listen(process.env.PORT,()=>{
