@@ -66,8 +66,8 @@ const newRent = async (req,res)=>{
         INSERT INTO
             rentals ("customerId", "gameId", "rentDate", "daysRented", "returnDate", "originalPrice", "delayFee")
         VALUES
-            (${customerId}, ${gameId}, '${rentDate}', ${daysRented}, ${returnDate}, ${originalPrice}, ${delayFee})
-        ;`);
+            ($1, $2, '$3', $4, $5, $6, $7)
+        ;`,[customerId, gameId, `${rentDate}`, daysRented, returnDate, originalPrice, delayFee]);
         
         res.sendStatus(201);
 
@@ -111,9 +111,9 @@ const getRentals = async (req,res) =>{
                 ON
                 games."categoryId" = categories.id
         ${(customerId||gameId)?'WHERE':''}
-        ${customerId?`rentals."customerId"=${customerId}`:''}
-        ${gameId?` rentals."gameId"=${gameId}`:''}
-        ;`);
+        ${customerId?`rentals."customerId"=$1`:''}
+        ${gameId?` rentals."gameId"=$2`:''}
+        ;`,[customerId,gameId]);
         console.log(rentals.rows);
 
         const allRentals = [];
@@ -156,6 +156,37 @@ const returnRental = async (req,res)=>{
     const returnDate = dayjs().format('YYYY-MM-DD');
     
     try {
+
+        const getId = await connection.query(`
+        SELECT
+            *
+        FROM
+            rentals
+        WHERE
+            id = $1
+        LIMIT
+            1
+        ;`,[id]);
+
+        if(!getId.rows){
+            return res.sendStatus(404);
+        };
+
+        const returned = await connection.query(`
+        SELECT
+            "returnDate"
+        FROM
+            rentals
+        WHERE
+            id = $1
+        LIMIT
+            1
+        ;`,[id]);
+
+        if(returned.rows[0]){
+            return res.sendStatus(400);
+        };
+
         const rentalinfo = await connection.query(`
         SELECT
         "rentDate", "daysRented", "originalPrice"
@@ -200,15 +231,46 @@ const returnRental = async (req,res)=>{
 };
 const deletRent = async(req,res)=>{
     const id = req.params.id;
+
+    const getId = await connection.query(`
+        SELECT
+            *
+        FROM
+            rentals
+        WHERE
+            id = $1
+        LIMIT
+            1
+        ;`,[id]);
+
+        if(!getId.rows){
+            return res.sendStatus(404);
+        };
+
+        const returned = await connection.query(`
+        SELECT
+            "returnDate"
+        FROM
+            rentals
+        WHERE
+            id = $1
+        LIMIT
+            1
+        ;`,[id]);
+
+        if(returned.rows[0]){
+            return res.sendStatus(400);
+        };
+
     try {
-        const query = connection.query(`
+        const query = await connection.query(`
         DELETE 
         FROM 
             rentals 
         WHERE 
             id = $1
         ;
-        `)
+        `,[id])
         
     } catch (error) {
         res.send(error);

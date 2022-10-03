@@ -5,7 +5,7 @@ const validateId = async (req,res,next)=>{
     const id = req.params.id;
     try {
 
-        const getId = connection.query(`
+        const getId = await connection.query(`
         SELECT
             *
         FROM
@@ -15,9 +15,6 @@ const validateId = async (req,res,next)=>{
         LIMIT
             1
         ;`,[id]);
-        console.log('1')
-        console.log(getId.rows)
-
         if(getId.rows){
             return res.sendStatus(404);
         };

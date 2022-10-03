@@ -7,9 +7,9 @@ const router = express.Router();
 router.get('/',getRentals)
 router.post('/',newRent);
 
-router.use(validateId);
+//router.use(validateId);
 
-router.use(isReturned);
+//router.use(isReturned);
 
 router.post('/:id/return',returnRental);
 
